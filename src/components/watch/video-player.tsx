@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Loader2, TriangleAlert } from "lucide-react";
 import { useHlsPlayer } from "@/hooks/use-hls-player";
 import type { SubtitleTrack } from "@/types/watch";
@@ -31,6 +32,33 @@ export function VideoPlayer({
     startTime,
     onEnded,
   });
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const applySubtitleMode = () => {
+      const preferred =
+        subtitles.find((subtitle) => subtitle.default) ?? subtitles[0];
+      const preferredKey = preferred
+        ? `${preferred.lang}|${preferred.label}`
+        : null;
+
+      for (let index = 0; index < video.textTracks.length; index += 1) {
+        const track = video.textTracks[index];
+        const key = `${track.language}|${track.label}`;
+        track.mode =
+          preferredKey && key === preferredKey ? "showing" : "disabled";
+      }
+    };
+
+    applySubtitleMode();
+    video.textTracks.addEventListener("addtrack", applySubtitleMode);
+
+    return () => {
+      video.textTracks.removeEventListener("addtrack", applySubtitleMode);
+    };
+  }, [subtitles, videoRef]);
 
   const displayError = errorMessage ?? error;
 

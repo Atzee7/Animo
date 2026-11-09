@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHistory } from "@/hooks/use-history";
+import { useSubtitleTracks } from "@/hooks/use-subtitle-tracks";
 import { resolveEpisodeStream } from "@/lib/animeparadise/browser";
 import type { EpisodeStream, EpisodeSummary } from "@/types/watch";
 import { EpisodeList } from "./episode-list";
@@ -39,6 +40,7 @@ export function WatchView({
   const [stream, setStream] = useState<EpisodeStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retryToken, setRetryToken] = useState(0);
+  const subtitleTracks = useSubtitleTracks(stream?.subtitles);
 
   useEffect(() => {
     lastSavedRef.current = 0;
@@ -128,7 +130,7 @@ export function WatchView({
           <VideoPlayer
             src={stream?.hlsUrl ?? null}
             poster={coverImage}
-            subtitles={stream?.subtitles}
+            subtitles={subtitleTracks}
             errorMessage={error}
             autoPlay
             onEnded={handleEnded}
