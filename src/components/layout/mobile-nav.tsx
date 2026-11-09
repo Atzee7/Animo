@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, Heart, Home, Search } from "lucide-react";
+import { Compass, Heart, History as HistoryIcon, Home } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const items = [
   { href: "/", label: "Home", icon: Home },
   { href: "/browse", label: "Browse", icon: Compass },
-  { href: "/search", label: "Search", icon: Search },
+  { href: "/history", label: "Riwayat", icon: HistoryIcon },
   { href: "/favorites", label: "Favorit", icon: Heart },
 ];
 
