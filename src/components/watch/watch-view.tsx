@@ -17,6 +17,7 @@ interface WatchViewProps {
   animeId: number;
   animeTitle: string;
   coverImage: string | null;
+  bannerImage: string | null;
   episodeNumber: number;
   episodeTitle: string | null;
   episodes: EpisodeSummary[];
@@ -28,6 +29,7 @@ export function WatchView({
   animeId,
   animeTitle,
   coverImage,
+  bannerImage,
   episodeNumber,
   episodeTitle,
   episodes,
@@ -55,7 +57,7 @@ export function WatchView({
       upsertHistory({
         animeId,
         title: animeTitle,
-        coverImage: coverImage ?? "",
+        coverImage: bannerImage ?? coverImage ?? "",
         episodeNumber,
         episodeUid: uid,
         animeParadiseId: origin,
@@ -68,6 +70,7 @@ export function WatchView({
       animeId,
       animeTitle,
       coverImage,
+      bannerImage,
       episodeNumber,
       uid,
       origin,

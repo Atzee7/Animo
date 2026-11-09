@@ -1,5 +1,6 @@
 import "server-only";
 
+import { animeParadiseOverrides } from "./overrides";
 import type {
   AnimeParadiseAnime,
   AnimeParadiseEpisode,
@@ -75,59 +76,159 @@ export async function getAnimeParadiseEpisodes(
   return Array.isArray(data) ? data : [];
 }
 
+export interface AnimeParadiseMatchInput {
+  id: number;
+  title: string;
+  titleEnglish?: string | null;
+  titleNative?: string | null;
+  seasonYear?: number | null;
+  episodes?: number | null;
+}
+
 function normalizeTitle(value: string): string {
   return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\b(season|part|cour)\s*\d+\b/g, " ")
+    .replace(/\b(?:season|part|cour)\s*\d+\b/g, " ")
+    .replace(/\b\d+(?:st|nd|rd|th)\s+season\b/g, " ")
+    .replace(/\bs\d+\b/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
 
+function stripSeasonSuffix(value: string): string {
+  return value
+    .replace(/\b(?:season|part|cour)\s*\d+\b/gi, "")
+    .replace(/\b\d+(?:st|nd|rd|th)\s+season\b/gi, "")
+    .replace(/\bs\d+\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function buildTitleCandidates(
+  titles: Array<string | null | undefined>,
+): string[] {
+  const candidates = new Set<string>();
+
+  for (const raw of titles) {
+    const title = raw?.trim();
+    if (!title) continue;
+
+    candidates.add(title);
+    const base = stripSeasonSuffix(title);
+    if (base && base !== title) candidates.add(base);
+  }
+
+  return [...candidates].slice(0, 5);
+}
+
+function candidateTitles(candidate: AnimeParadiseAnime): string[] {
+  return [
+    candidate.title,
+    candidate.alternativeTitle?.english,
+    candidate.alternativeTitle?.romaji,
+    candidate.alternativeTitle?.native,
+  ].filter((title): title is string => Boolean(title));
+}
+
 function scoreCandidate(
   candidate: AnimeParadiseAnime,
-  title: string,
+  titles: string[],
   year?: number | null,
+  episodes?: number | null,
 ): number {
-  const normalizedTitle = normalizeTitle(title);
-  const normalizedCandidate = normalizeTitle(candidate.title);
-  const alternative = normalizeTitle(
-    candidate.alternativeTitle?.english ??
-      candidate.alternativeTitle?.romaji ??
-      "",
-  );
+  const normalizedInputs = titles
+    .map(normalizeTitle)
+    .filter((title): title is string => Boolean(title));
+  const normalizedCandidateTitles = candidateTitles(candidate)
+    .map(normalizeTitle)
+    .filter((title): title is string => Boolean(title));
 
-  let score = 0;
+  let titleScore = 0;
 
-  if (normalizedCandidate === normalizedTitle) score += 10;
-  else if (normalizedCandidate.startsWith(normalizedTitle)) score += 7;
-  else if (normalizedCandidate.includes(normalizedTitle)) score += 5;
-  else if (alternative === normalizedTitle) score += 9;
-  else if (alternative.includes(normalizedTitle)) score += 4;
+  for (const candidateTitle of normalizedCandidateTitles) {
+    for (const input of normalizedInputs) {
+      if (candidateTitle === input) {
+        titleScore = Math.max(titleScore, 12);
+      } else if (candidateTitle.startsWith(input)) {
+        titleScore = Math.max(titleScore, 8);
+      } else if (candidateTitle.includes(input)) {
+        titleScore = Math.max(titleScore, 6);
+      }
+    }
+  }
+
+  let score = titleScore;
 
   if (year && candidate.animeSeason?.year === year) score += 3;
-  if (candidate.startDate?.startsWith(String(year))) score += 1;
+  if (year && candidate.startDate?.startsWith(String(year))) score += 1;
+
+  const candidateEpisodes = candidate.episodeCount ?? candidate.episodes;
+  if (episodes && candidateEpisodes === episodes) score += 2;
 
   return score;
 }
 
-/**
- * AniList and AnimeParadise use different IDs. This resolves the best
- * AnimeParadise match from the AniList title (and optional year).
- */
-export async function resolveAnimeParadiseMatch(
-  title: string,
+function rankCandidates(
+  candidates: AnimeParadiseAnime[],
+  titles: string[],
   year?: number | null,
-): Promise<AnimeParadiseAnime | null> {
-  const results = await searchAnimeParadise(title);
-  if (results.length === 0) return null;
-
-  const ranked = results
+  episodes?: number | null,
+) {
+  return candidates
     .map((candidate) => ({
       candidate,
-      score: scoreCandidate(candidate, title, year),
+      score: scoreCandidate(candidate, titles, year, episodes),
     }))
     .sort((a, b) => b.score - a.score);
+}
 
-  return ranked[0]?.candidate ?? results[0];
+/**
+ * AniList and AnimeParadise use different IDs. This resolves the best match
+ * using manual overrides first, then title variants + year + episode count.
+ */
+export async function resolveAnimeParadiseMatch(
+  anime: AnimeParadiseMatchInput,
+): Promise<AnimeParadiseAnime | null> {
+  const overrideId = animeParadiseOverrides[anime.id];
+  if (overrideId) {
+    return { _id: overrideId, title: anime.title };
+  }
+
+  const titles = buildTitleCandidates([
+    anime.title,
+    anime.titleEnglish,
+    anime.titleNative,
+  ]);
+
+  if (titles.length === 0) return null;
+
+  const found = new Map<string, AnimeParadiseAnime>();
+  let ranked: Array<{ candidate: AnimeParadiseAnime; score: number }> = [];
+
+  for (const query of titles) {
+    const results = await searchAnimeParadise(query).catch(() => []);
+
+    for (const candidate of results) {
+      found.set(candidate._id, candidate);
+    }
+
+    ranked = rankCandidates(
+      [...found.values()],
+      titles,
+      anime.seasonYear,
+      anime.episodes,
+    );
+
+    if (ranked[0] && ranked[0].score >= 12) break;
+  }
+
+  const best = ranked[0];
+  if (best && best.score >= 5) return best.candidate;
+
+  if (found.size === 1) {
+    return [...found.values()][0];
+  }
+
+  return null;
 }

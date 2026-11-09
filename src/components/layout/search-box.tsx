@@ -2,13 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Search, X } from "lucide-react";
+import { ArrowRight, Loader2, Search, X } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import type { SearchResponse } from "@/types/api";
 import type { AnimeSummary } from "@/types/anime";
 
 export function SearchBox() {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<AnimeSummary[]>([]);
@@ -70,6 +72,14 @@ export function SearchBox() {
     return () => document.removeEventListener("mousedown", onPointerDown);
   }, []);
 
+  const goToResults = () => {
+    const term = query.trim();
+    if (term.length < 2) return;
+
+    setOpen(false);
+    router.push(`/search?q=${encodeURIComponent(term)}`);
+  };
+
   const showDropdown =
     open && (loading || results.length > 0 || Boolean(error));
 
@@ -86,6 +96,10 @@ export function SearchBox() {
           onFocus={() => setOpen(true)}
           onKeyDown={(event) => {
             if (event.key === "Escape") setOpen(false);
+            if (event.key === "Enter") {
+              event.preventDefault();
+              goToResults();
+            }
           }}
           placeholder="Cari anime, judul, atau genre…"
           aria-label="Cari anime"
@@ -123,41 +137,55 @@ export function SearchBox() {
           ) : null}
 
           {results.length > 0 ? (
-            <ul className="max-h-[420px] overflow-y-auto py-1">
-              {results.map((anime) => (
-                <li key={anime.id}>
-                  <Link
-                    href={`/anime/${anime.id}`}
-                    onClick={() => {
-                      setOpen(false);
-                      setQuery("");
-                    }}
-                    className="flex items-center gap-3 px-3 py-2 transition-colors hover:bg-surface-raised"
-                  >
-                    <div className="relative h-14 w-10 shrink-0 overflow-hidden rounded bg-surface-raised">
-                      {anime.coverImage ? (
-                        <Image
-                          src={anime.coverImage}
-                          alt=""
-                          fill
-                          sizes="40px"
-                          className="object-cover"
-                        />
-                      ) : null}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-foreground">
-                        {anime.title}
-                      </p>
-                      <p className="mt-0.5 text-xs text-subtle">
-                        {anime.format ?? "Anime"}
-                        {anime.seasonYear ? ` · ${anime.seasonYear}` : ""}
-                      </p>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="max-h-[420px] overflow-y-auto py-1">
+                {results.map((anime) => (
+                  <li key={anime.id}>
+                    <Link
+                      href={`/anime/${anime.id}`}
+                      onClick={() => {
+                        setOpen(false);
+                        setQuery("");
+                      }}
+                      className="flex items-center gap-3 px-3 py-2 transition-colors hover:bg-surface-raised"
+                    >
+                      <div className="relative h-14 w-10 shrink-0 overflow-hidden rounded bg-surface-raised">
+                        {anime.coverImage ? (
+                          <Image
+                            src={anime.coverImage}
+                            alt=""
+                            fill
+                            sizes="40px"
+                            className="object-cover"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-foreground">
+                          {anime.title}
+                        </p>
+                        <p className="mt-0.5 text-xs text-subtle">
+                          {anime.format ?? "Anime"}
+                          {anime.seasonYear ? ` · ${anime.seasonYear}` : ""}
+                        </p>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="border-t border-border/70 p-1.5">
+                <Link
+                  href={`/search?q=${encodeURIComponent(debouncedQuery.trim())}`}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-between gap-2 rounded px-2.5 py-2 text-xs font-semibold text-muted transition-colors hover:bg-surface-raised hover:text-brand"
+                >
+                  <span className="truncate">
+                    Lihat semua hasil untuk “{debouncedQuery.trim()}”
+                  </span>
+                  <ArrowRight className="size-3.5 shrink-0" aria-hidden />
+                </Link>
+              </div>
+            </>
           ) : null}
         </div>
       ) : null}

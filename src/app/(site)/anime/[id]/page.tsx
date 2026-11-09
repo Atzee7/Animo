@@ -39,7 +39,7 @@ export default async function AnimeDetailPage({
   let episodes: EpisodeSummary[] = [];
 
   try {
-    const match = await resolveAnimeParadiseMatch(anime.title, anime.seasonYear);
+    const match = await resolveAnimeParadiseMatch(anime);
     if (match) {
       const rawEpisodes = await getAnimeParadiseEpisodes(match._id);
       episodes = rawEpisodes

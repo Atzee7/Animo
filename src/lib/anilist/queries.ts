@@ -105,8 +105,8 @@ export const RECENT_EPISODES_QUERY = `
 `;
 
 export const SEARCH_ANIME_QUERY = `
-  query SearchAnime($search: String!, $perPage: Int = 8) {
-    Page(page: 1, perPage: $perPage) {
+  query SearchAnime($search: String!, $page: Int = 1, $perPage: Int = 8) {
+    Page(page: $page, perPage: $perPage) {
       pageInfo {
         total
         currentPage

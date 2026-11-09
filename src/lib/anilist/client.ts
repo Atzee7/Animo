@@ -115,20 +115,44 @@ export async function getRecentEpisodes(perPage = 20): Promise<AiringEpisode[]> 
   }));
 }
 
+export async function searchAnimePage(
+  search: string,
+  page = 1,
+  perPage = 24,
+): Promise<Paginated<AnimeSummary>> {
+  const term = search.trim();
+
+  if (!term) {
+    return {
+      items: [],
+      page: 1,
+      total: 0,
+      lastPage: 1,
+      hasNextPage: false,
+    };
+  }
+
+  const data = await request<{ Page: AniListMediaPage }>(
+    SEARCH_ANIME_QUERY,
+    { search: term, page, perPage },
+    300,
+  );
+
+  return {
+    items: data.Page.media.map(mapMedia),
+    page: data.Page.pageInfo.currentPage,
+    total: data.Page.pageInfo.total,
+    lastPage: Math.max(1, data.Page.pageInfo.lastPage),
+    hasNextPage: data.Page.pageInfo.hasNextPage,
+  };
+}
+
 export async function searchAnime(
   search: string,
   perPage = 8,
 ): Promise<AnimeSummary[]> {
-  const term = search.trim();
-  if (!term) return [];
-
-  const data = await request<{ Page: AniListMediaPage }>(
-    SEARCH_ANIME_QUERY,
-    { search: term, perPage },
-    300,
-  );
-
-  return data.Page.media.map(mapMedia);
+  const result = await searchAnimePage(search, 1, perPage);
+  return result.items;
 }
 
 export async function getAnimeDetail(id: number): Promise<AnimeDetail | null> {
@@ -156,19 +180,24 @@ export interface BrowseAnimeParams {
 export async function getBrowseAnime(
   params: BrowseAnimeParams = {},
 ): Promise<Paginated<AnimeSummary>> {
+  const variables: Record<string, unknown> = {
+    page: params.page ?? 1,
+    perPage: params.perPage ?? 24,
+    sort: params.sort ?? ["POPULARITY_DESC"],
+  };
+
+  // AniList treats an explicit null enum filter (notably status) differently
+  // from an omitted variable, returning an empty page. Only send active filters.
+  if (params.search) variables.search = params.search;
+  if (params.genre) variables.genre = params.genre;
+  if (params.season) variables.season = params.season;
+  if (params.seasonYear) variables.seasonYear = params.seasonYear;
+  if (params.format) variables.format = params.format;
+  if (params.status) variables.status = params.status;
+
   const data = await request<{ Page: AniListMediaPage }>(
     BROWSE_ANIME_QUERY,
-    {
-      page: params.page ?? 1,
-      perPage: params.perPage ?? 24,
-      search: params.search ?? null,
-      genre: params.genre ?? null,
-      season: params.season ?? null,
-      seasonYear: params.seasonYear ?? null,
-      format: params.format ?? null,
-      status: params.status ?? null,
-      sort: params.sort ?? ["POPULARITY_DESC"],
-    },
+    variables,
     900,
   );
 
@@ -176,6 +205,7 @@ export async function getBrowseAnime(
     items: data.Page.media.map(mapMedia),
     page: data.Page.pageInfo.currentPage,
     total: data.Page.pageInfo.total,
+    lastPage: data.Page.pageInfo.lastPage,
     hasNextPage: data.Page.pageInfo.hasNextPage,
   };
 }

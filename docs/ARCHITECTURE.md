@@ -160,6 +160,24 @@ menyimpan atau meneruskan byte video.
 Subtitle yang dipakai adalah entri `type: "vtt"`. Entri `ass` tidak bisa langsung
 dipasang ke `<track>`.
 
+### Override pencocokan AnimeParadise
+
+AniList dan AnimeParadise memakai ID berbeda. Pencocokan otomatis memakai
+judul (termasuk judul alternatif), tahun, dan jumlah episode, dengan variasi
+judul tanpa suffix `Season N`, `Part N`, `Cour N`, atau `S N`.
+
+Kalau sebuah anime tetap salah cocok atau tidak ditemukan, tambahkan mapping
+manual di `src/lib/animeparadise/overrides.ts`:
+
+```ts
+export const animeParadiseOverrides: Record<number, string> = {
+  97940: "qBc2O7jBL03Egce7", // AniList Black Clover -> AnimeParadise
+};
+```
+
+Override diperiksa lebih dulu, jadi tidak ada request pencarian tambahan untuk
+judul yang sudah dipetakan.
+
 ## Penyimpanan lokal
 
 Key:

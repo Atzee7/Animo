@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import {
+  clearHistory,
   getHistory,
   getHistoryServerSnapshot,
   removeHistory,
@@ -21,5 +22,6 @@ export function useHistory() {
     count: history.length,
     upsertHistory,
     removeHistory,
+    clearHistory,
   };
 }

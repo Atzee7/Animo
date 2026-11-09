@@ -36,7 +36,7 @@ export default async function WatchPage({
   let episodes: EpisodeSummary[] = [];
 
   try {
-    const match = await resolveAnimeParadiseMatch(anime.title, anime.seasonYear);
+    const match = await resolveAnimeParadiseMatch(anime);
     if (match) {
       animeParadiseId = match._id;
       const rawEpisodes = await getAnimeParadiseEpisodes(match._id);
@@ -82,6 +82,7 @@ export default async function WatchPage({
       animeId={anime.id}
       animeTitle={anime.title}
       coverImage={anime.coverImage || null}
+      bannerImage={anime.bannerImage || null}
       episodeNumber={episodeNumber}
       episodeTitle={currentEpisode.title}
       episodes={episodes}
