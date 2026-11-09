@@ -121,7 +121,7 @@ export default async function BrowsePage({
       <PageIntro
         eyebrow="Katalog"
         title="Jelajahi anime"
-        description="Temukan anime berdasarkan genre. Data diambil langsung dari AniList."
+        description="Temukan anime berdasarkan genre dan urutan."
       />
 
       <form
@@ -179,7 +179,7 @@ export default async function BrowsePage({
           className="mt-8"
           icon={<Compass className="size-8" aria-hidden />}
           title="Gagal memuat katalog"
-          description="AniList sedang tidak bisa diakses. Coba muat ulang halaman ini."
+          description="Sumber data sedang tidak bisa diakses. Coba muat ulang halaman ini."
           action={
             <Link href="/browse" className={buttonVariants()}>
               Coba lagi

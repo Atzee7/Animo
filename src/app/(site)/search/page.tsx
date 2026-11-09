@@ -54,7 +54,7 @@ export default async function SearchPage({
         title={q.length >= 2 ? `Hasil untuk “${q}”` : "Cari anime"}
         description={
           q.length >= 2
-            ? "Hasil pencarian dari AniList, diurutkan berdasarkan relevansi."
+            ? "Hasil pencarian, diurutkan berdasarkan relevansi."
             : "Ketik judul anime yang ingin kamu cari, lalu tekan Enter atau tombol Cari."
         }
       />
@@ -97,7 +97,7 @@ export default async function SearchPage({
         <EmptyState
           icon={<Search className="size-8" aria-hidden />}
           title="Pencarian gagal"
-          description="AniList sedang tidak bisa diakses. Coba lagi sebentar."
+          description="Sumber data sedang tidak bisa diakses. Coba lagi sebentar."
           action={
             <Link href={buildPageHref(1)} className={buttonVariants()}>
               Coba lagi

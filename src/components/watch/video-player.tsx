@@ -96,7 +96,7 @@ export function VideoPlayer({
             Menyiapkan stream episode…
           </p>
           <p className="max-w-xs text-xs text-muted">
-            Sumber video akan dimuat dari AnimeParadise di perangkatmu.
+            Video akan diputar langsung di perangkatmu.
           </p>
         </div>
       ) : null}

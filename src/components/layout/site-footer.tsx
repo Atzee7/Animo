@@ -26,7 +26,6 @@ const columns = [
     title: "Tentang",
     links: [
       { href: "/", label: "Tentang ANIMO" },
-      { href: "https://anilist.co", label: "Sumber Data" },
       { href: "/", label: "Kontak" },
     ],
   },
@@ -71,7 +70,7 @@ export function SiteFooter() {
 
         <div className="hidden md:block">
           <h3 className="text-xs font-semibold text-foreground">
-            Data oleh AniList
+            Catatan
           </h3>
           <p className="mt-3.5 max-w-[232px] text-[11px] leading-relaxed text-muted">
             ANIMO tidak meng-host video. Semua stream dialirkan dari sumber
