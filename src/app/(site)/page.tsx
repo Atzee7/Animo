@@ -7,7 +7,7 @@ import {
   getRecentEpisodes,
   getTopAiring,
 } from "@/lib/anilist/client";
-import { demoContinueWatching, featuredItems } from "@/lib/featured";
+import { featuredItems } from "@/lib/featured";
 
 export default async function HomePage() {
   const [recentEpisodes, topAiring, popularAnime] = await Promise.all([
@@ -21,7 +21,7 @@ export default async function HomePage() {
       <HeroCarousel items={featuredItems} />
 
       <div className="container-page space-y-10 pb-10 pt-10 lg:space-y-12 lg:pb-11 lg:pt-12">
-        <ContinueWatchingRail fallback={demoContinueWatching} />
+        <ContinueWatchingRail />
         <RecentEpisodes episodes={recentEpisodes} />
 
         <AnimeShelf

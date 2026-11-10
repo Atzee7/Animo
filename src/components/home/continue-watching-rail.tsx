@@ -5,17 +5,10 @@ import Link from "next/link";
 import { useHistory } from "@/hooks/use-history";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { formatDuration } from "@/lib/utils/format";
-import type { HistoryEntry } from "@/types/watch";
 
-interface ContinueWatchingRailProps {
-  fallback?: HistoryEntry[];
-}
-
-export function ContinueWatchingRail({
-  fallback = [],
-}: ContinueWatchingRailProps) {
+export function ContinueWatchingRail() {
   const { history } = useHistory();
-  const entries = (history.length > 0 ? history : fallback).slice(0, 4);
+  const entries = history.slice(0, 4);
 
   if (entries.length === 0) return null;
 

@@ -1,5 +1,4 @@
 import type { AnimeSummary } from "@/types/anime";
-import type { HistoryEntry } from "@/types/watch";
 
 export interface FeaturedItem {
   anime: AnimeSummary;
@@ -78,53 +77,3 @@ export const featuredItems: FeaturedItem[] = [
 
 export const featuredAnime = featuredItems[0].anime;
 
-/**
- * Sample continue-watching cards so the first visit matches the FigCraft
- * composition. Real localStorage history takes over as soon as it exists.
- */
-export const demoContinueWatching: HistoryEntry[] = [
-  {
-    animeId: 154587,
-    title: "Frieren: Beyond Journey's End",
-    coverImage: "/images/continue/frieren.jpg",
-    episodeNumber: 6,
-    episodeUid: null,
-    animeParadiseId: null,
-    progressSeconds: 754,
-    durationSeconds: 1440,
-    updatedAt: 4,
-  },
-  {
-    animeId: 161645,
-    title: "The Apothecary Diaries",
-    coverImage: "/images/continue/apothecary.jpg",
-    episodeNumber: 18,
-    episodeUid: null,
-    animeParadiseId: null,
-    progressSeconds: 492,
-    durationSeconds: 1440,
-    updatedAt: 3,
-  },
-  {
-    animeId: 21,
-    title: "One Piece",
-    coverImage: "/images/continue/one-piece.jpg",
-    episodeNumber: 1132,
-    episodeUid: null,
-    animeParadiseId: null,
-    progressSeconds: 845,
-    durationSeconds: 1440,
-    updatedAt: 2,
-  },
-  {
-    animeId: 97940,
-    title: "Black Clover Season 2",
-    coverImage: "/images/continue/black-clover.jpg",
-    episodeNumber: 4,
-    episodeUid: null,
-    animeParadiseId: null,
-    progressSeconds: 200,
-    durationSeconds: 1440,
-    updatedAt: 1,
-  },
-];
