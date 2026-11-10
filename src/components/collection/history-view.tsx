@@ -77,7 +77,7 @@ export function HistoryView() {
                     ),
                   )
                 : 0;
-            const href = `/anime/${entry.animeId}?episode=${entry.episodeNumber}`;
+            const href = `/watch/${entry.animeId}/${entry.episodeNumber}`;
 
             return (
               <li
