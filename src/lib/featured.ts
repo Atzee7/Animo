@@ -5,6 +5,8 @@ export interface FeaturedItem {
   anime: AnimeSummary;
   episode: number;
   badges: string[];
+  /** CSS object-position for the banner crop (mobile shows a narrow slice). */
+  imagePosition?: string;
 }
 
 export const featuredItems: FeaturedItem[] = [
@@ -15,7 +17,7 @@ export const featuredItems: FeaturedItem[] = [
       titleEnglish: "Black Clover Season 2",
       titleNative: "ブラッククローバー 第2シーズン",
       coverImage: "/images/black-clover-poster.jpg",
-      bannerImage: "/images/hero-black-clover.jpg",
+      bannerImage: "/images/hero-black-clover-hd.jpg",
       format: "TV",
       status: "RELEASING",
       seasonYear: 2026,
@@ -36,7 +38,7 @@ export const featuredItems: FeaturedItem[] = [
       titleEnglish: "Frieren: Beyond Journey's End",
       titleNative: "葬送のフリーレン",
       coverImage: "/images/frieren-poster.jpg",
-      bannerImage: "/images/hero-frieren.jpg",
+      bannerImage: "/images/hero-frieren-hd.jpg",
       format: "TV",
       status: "FINISHED",
       seasonYear: 2023,
@@ -49,6 +51,7 @@ export const featuredItems: FeaturedItem[] = [
     },
     episode: 12,
     badges: ["Tamat", "Top Rated"],
+    imagePosition: "62% 50%",
   },
   {
     anime: {
@@ -57,7 +60,7 @@ export const featuredItems: FeaturedItem[] = [
       titleEnglish: "One Piece",
       titleNative: "ONE PIECE",
       coverImage: "/images/one-piece-poster.jpg",
-      bannerImage: "/images/hero-one-piece.jpg",
+      bannerImage: "/images/hero-one-piece-hd.jpg",
       format: "TV",
       status: "RELEASING",
       seasonYear: 1999,

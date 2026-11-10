@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ListVideo } from "lucide-react";
+import { ListVideo } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/anime/favorite-button";
@@ -12,20 +12,18 @@ interface HeroSectionProps {
   anime: AnimeSummary;
   episode?: number;
   badges?: string[];
-  index?: number;
-  count?: number;
-  onPrev?: () => void;
-  onNext?: () => void;
+  /** Only the first slide should preload its banner image. */
+  isFirst?: boolean;
+  /** CSS object-position for the banner crop. */
+  imagePosition?: string;
 }
 
 export function HeroSection({
   anime,
   episode = 1,
   badges,
-  index,
-  count,
-  onPrev,
-  onNext,
+  isFirst = false,
+  imagePosition,
 }: HeroSectionProps) {
   const heroBadges =
     badges ??
@@ -35,15 +33,18 @@ export function HeroSection({
     ].filter((badge): badge is string => Boolean(badge));
 
   return (
-    <section className="relative overflow-hidden">
+    <div className="relative h-full overflow-hidden">
       <div className="absolute inset-0">
         {anime.bannerImage ? (
           <Image
             src={anime.bannerImage}
             alt=""
             fill
-            priority
+            priority={isFirst}
+            loading="eager"
             sizes="100vw"
+            draggable={false}
+            style={imagePosition ? { objectPosition: imagePosition } : undefined}
             className="object-cover object-center"
           />
         ) : null}
@@ -55,16 +56,16 @@ export function HeroSection({
       <div className="container-page relative flex min-h-[400px] flex-col justify-start pb-9 pt-7 sm:min-h-[460px] lg:min-h-[520px] lg:justify-end lg:pb-12 lg:pt-28">
         <div className="w-full max-w-[640px]">
           <div className="flex flex-wrap items-center gap-2">
-            {heroBadges.map((badge, index) => (
-              <Badge key={badge} tone={index === 0 ? "brand" : "neutral"}>
+            {heroBadges.map((badge, badgeIndex) => (
+              <Badge key={badge} tone={badgeIndex === 0 ? "brand" : "neutral"}>
                 {badge}
               </Badge>
             ))}
           </div>
 
-          <h1 className="mt-4 max-w-[340px] text-balance font-display text-[clamp(28px,6vw,62px)] font-bold leading-[0.95] tracking-tight text-foreground sm:max-w-[640px]">
+          <h2 className="mt-4 max-w-[340px] text-balance font-display text-[clamp(28px,6vw,62px)] font-bold leading-[0.95] tracking-tight text-foreground sm:max-w-[640px]">
             {anime.title}
-          </h1>
+          </h2>
 
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-soft sm:text-[13px]">
             <ScorePill score={anime.averageScore} variant="plain" />
@@ -88,6 +89,7 @@ export function HeroSection({
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
               href={`/anime/${anime.id}?episode=${episode}`}
+              draggable={false}
               className={buttonVariants({
                 size: "lg",
                 className: "h-11 px-5 text-[13px] lg:h-12 lg:px-6 lg:text-sm",
@@ -100,42 +102,6 @@ export function HeroSection({
           </div>
         </div>
       </div>
-
-      {typeof index === "number" && count && count > 1 ? (
-        <div className="absolute bottom-5 left-4 flex items-center gap-1.5 lg:hidden">
-          {Array.from({ length: count }).map((_, dotIndex) => (
-            <span
-              key={dotIndex}
-              className={
-                dotIndex === index
-                  ? "h-[3px] w-4 rounded-full bg-brand"
-                  : "size-[3px] rounded-full bg-white/50"
-              }
-            />
-          ))}
-        </div>
-      ) : null}
-
-      {onPrev && onNext ? (
-        <div className="absolute bottom-11 right-12 hidden items-center gap-2 lg:flex">
-          <button
-            type="button"
-            onClick={onPrev}
-            aria-label="Anime sebelumnya"
-            className="flex size-10 items-center justify-center rounded-full border border-border-strong bg-surface text-foreground transition-colors hover:bg-surface-raised"
-          >
-            <ChevronLeft className="size-4" aria-hidden />
-          </button>
-          <button
-            type="button"
-            onClick={onNext}
-            aria-label="Anime berikutnya"
-            className="flex size-10 items-center justify-center rounded-full border border-border-strong bg-surface text-foreground transition-colors hover:bg-surface-raised"
-          >
-            <ChevronRight className="size-4" aria-hidden />
-          </button>
-        </div>
-      ) : null}
-    </section>
+    </div>
   );
 }
