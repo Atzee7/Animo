@@ -16,9 +16,13 @@ export const animeParadiseOverrides: Record<number, string> = {
   20958: "d9FieOUgc99q49sM",
   // Black Clover (2017)
   97940: "qBc2O7jBL03Egce7",
+  // Black Clover Season 2 (2026)
+  195604: "6873d1ed0a6a65c56524956b",
   // Solo Leveling (2024) / Season 2 (2025)
   151807: "Y45v9Oh6TpXU1EEY",
   176496: "67003839e9aec61796753c7b",
   // Frieren: Beyond Journey's End (2023)
   154587: "NIUsb960SxtXls4h",
+  // Frieren: Beyond Journey's End Season 2 (2026)
+  182255: "6700659058be9f1ea1bbfe50",
 };

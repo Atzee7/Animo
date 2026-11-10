@@ -11,7 +11,7 @@ export interface FeaturedItem {
 export const featuredItems: FeaturedItem[] = [
   {
     anime: {
-      id: 97940,
+      id: 195604,
       title: "BLACK CLOVER SEASON 2",
       titleEnglish: "Black Clover Season 2",
       titleNative: "ブラッククローバー 第2シーズン",
@@ -20,7 +20,7 @@ export const featuredItems: FeaturedItem[] = [
       format: "TV",
       status: "RELEASING",
       seasonYear: 2026,
-      episodes: 6,
+      episodes: 26,
       averageScore: 87,
       genres: ["Action", "Adventure", "Comedy", "Fantasy"],
       description:
@@ -32,25 +32,24 @@ export const featuredItems: FeaturedItem[] = [
   },
   {
     anime: {
-      id: 154587,
-      title: "FRIEREN: BEYOND JOURNEY'S END",
-      titleEnglish: "Frieren: Beyond Journey's End",
-      titleNative: "葬送のフリーレン",
-      coverImage: "/images/frieren-poster.jpg",
-      bannerImage: "/images/hero-frieren-hd.jpg",
+      id: 182255,
+      title: "FRIEREN: BEYOND JOURNEY'S END SEASON 2",
+      titleEnglish: "Frieren: Beyond Journey's End Season 2",
+      titleNative: "葬送のフリーレン 第2期",
+      coverImage: "/images/frieren-s2-poster.jpg",
+      bannerImage: "/images/hero-frieren-s2-hd.jpg",
       format: "TV",
       status: "FINISHED",
-      seasonYear: 2023,
-      episodes: 28,
-      averageScore: 91,
+      seasonYear: 2026,
+      episodes: 10,
+      averageScore: 87,
       genres: ["Adventure", "Drama", "Fantasy"],
       description:
-        "After the party of heroes defeated the Demon King, the elven mage Frieren begins a journey to understand the fleeting lives of the humans she once travelled with.",
+        "After the First-Class Mage Exam, Frieren, Stark, and Fern press on into the dangerous Northern Plateau on their way to Aureole, where new adversaries force the party to confront who they have become.",
       nextAiringEpisode: null,
     },
-    episode: 12,
+    episode: 10,
     badges: ["Tamat", "Top Rated"],
-    imagePosition: "62% 50%",
   },
   {
     anime: {
