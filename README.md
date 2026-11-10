@@ -23,6 +23,38 @@ npm run dev
 
 Buka `http://localhost:3000`.
 
+## Akses dari HP (ngrok)
+
+Pratinjau di HP lewat tunnel HTTPS tanpa deploy:
+
+```bash
+# terminal 1
+npm run dev
+
+# terminal 2
+npm run tunnel                          # URL acak (berubah tiap restart)
+npm run tunnel -- xxxx.ngrok-free.app   # domain statis
+```
+
+Domain statis juga bisa disimpan sekali di `.env.local` sebagai `NGROK_DOMAIN`,
+lalu `npm run tunnel` memakainya otomatis. Ambil domain gratis di
+<https://dashboard.ngrok.com/domains>.
+
+Buka URL `https://...ngrok-free.app` di HP, lalu tekan **Visit Site** sekali
+saat muncul halaman peringatan ngrok.
+
+Catatan:
+
+- Video HLS diambil langsung oleh HP dari CDN AnimeParadise, jadi tidak melewati
+  ngrok — batas bandwidth gratis hanya terpakai untuk HTML/JS dan `/api/search`.
+- Token stream terikat IP pemanggil, dan resolusi terjadi di browser, jadi tetap
+  jalan dari jaringan HP.
+- Next dev memblokir aset `/_next/*` dari origin lain; `allowedDevOrigins` di
+  `next.config.ts` sudah mengizinkan domain ngrok.
+- Alternatif di Wi-Fi yang sama tanpa ngrok: `npm run dev:phone` lalu buka
+  `http://<IP-lokal-PC>:3000`.
+
+
 Script lain:
 
 ```bash

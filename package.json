@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:phone": "next dev --hostname 0.0.0.0",
+    "tunnel": "node scripts/tunnel.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

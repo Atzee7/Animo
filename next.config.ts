@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Izinkan aset dev (/_next/*) diakses lewat tunnel ngrok, mis. dari HP.
+  allowedDevOrigins: [
+    "*.ngrok-free.app",
+    "*.ngrok-free.dev",
+    "*.ngrok.app",
+  ],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.anilist.co" },
