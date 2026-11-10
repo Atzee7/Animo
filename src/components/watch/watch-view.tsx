@@ -37,12 +37,25 @@ export function WatchView({
   uid,
 }: WatchViewProps) {
   const router = useRouter();
-  const { upsertHistory } = useHistory();
+  const { history, upsertHistory } = useHistory();
   const lastSavedRef = useRef(0);
   const [stream, setStream] = useState<EpisodeStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retryToken, setRetryToken] = useState(0);
   const subtitleTracks = useSubtitleTracks(stream?.subtitles);
+
+  // Resume from the saved progress, unless the user was almost finished.
+  const resumeEntry = history.find(
+    (entry) =>
+      entry.animeId === animeId && entry.episodeNumber === episodeNumber,
+  );
+  const resumeTime =
+    resumeEntry &&
+    resumeEntry.progressSeconds > 5 &&
+    (resumeEntry.durationSeconds <= 0 ||
+      resumeEntry.durationSeconds - resumeEntry.progressSeconds > 10)
+      ? resumeEntry.progressSeconds
+      : 0;
 
   useEffect(() => {
     lastSavedRef.current = 0;
@@ -133,7 +146,10 @@ export function WatchView({
           <VideoPlayer
             src={stream?.hlsUrl ?? null}
             poster={coverImage}
+            startTime={resumeTime}
             subtitles={subtitleTracks}
+            intro={stream?.intro ?? null}
+            outro={stream?.outro ?? null}
             errorMessage={error}
             autoPlay
             onEnded={handleEnded}

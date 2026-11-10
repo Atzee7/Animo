@@ -34,7 +34,7 @@ export function ContinueWatchingRail() {
           return (
             <Link
               key={entry.animeId}
-              href={`/anime/${entry.animeId}?episode=${entry.episodeNumber}`}
+              href={`/watch/${entry.animeId}/${entry.episodeNumber}`}
               className="group relative block aspect-video w-[260px] shrink-0 snap-start overflow-hidden rounded-card bg-surface-raised sm:w-auto"
             >
               {entry.coverImage ? (
