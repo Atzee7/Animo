@@ -53,7 +53,7 @@ export function HeroSection({
         <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-background via-background/65 to-transparent" />
       </div>
 
-      <div className="container-page relative flex min-h-[400px] flex-col justify-start pb-9 pt-7 sm:min-h-[460px] lg:min-h-[520px] lg:justify-end lg:pb-12 lg:pt-28">
+      <div className="container-page relative flex h-full min-h-[400px] flex-col justify-between gap-6 pb-9 pt-7 sm:min-h-[460px] lg:min-h-[520px] lg:justify-end lg:pb-12 lg:pt-28">
         <div className="w-full max-w-[640px]">
           <div className="flex flex-wrap items-center gap-2">
             {heroBadges.map((badge, badgeIndex) => (
@@ -85,21 +85,21 @@ export function HeroSection({
               {anime.description}
             </p>
           ) : null}
+        </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Link
-              href={`/anime/${anime.id}?episode=${episode}`}
-              draggable={false}
-              className={buttonVariants({
-                size: "lg",
-                className: "h-11 px-5 text-[13px] lg:h-12 lg:px-6 lg:text-sm",
-              })}
-            >
-              <ListVideo className="size-4" aria-hidden />
-              Pilih Episode
-            </Link>
-            <FavoriteButton anime={anime} className="size-11 lg:size-12" />
-          </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href={`/anime/${anime.id}?episode=${episode}`}
+            draggable={false}
+            className={buttonVariants({
+              size: "lg",
+              className: "h-11 px-5 text-[13px] lg:h-12 lg:px-6 lg:text-sm",
+            })}
+          >
+            <ListVideo className="size-4" aria-hidden />
+            Pilih Episode
+          </Link>
+          <FavoriteButton anime={anime} className="size-11 lg:size-12" />
         </div>
       </div>
     </div>
