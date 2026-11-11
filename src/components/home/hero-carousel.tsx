@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils/cn";
 import type { FeaturedItem } from "@/lib/featured";
 import { HeroSection } from "./hero-section";
 
-const AUTOPLAY_MS = 6000;
+const AUTOPLAY_MS = 4000;
 const DRAG_THRESHOLD_RATIO = 0.2;
 const CLICK_SUPPRESS_PX = 8;
 const FLICK_VELOCITY = 0.35; // px per ms
