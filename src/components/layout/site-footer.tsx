@@ -23,10 +23,12 @@ const columns = [
     ],
   },
   {
-    title: "Tentang",
+    title: "Katalog",
     links: [
-      { href: "/", label: "Tentang ANIMO" },
-      { href: "/", label: "Kontak" },
+      { href: "/browse?sort=SCORE_DESC", label: "Skor Tertinggi" },
+      { href: "/browse?status=RELEASING", label: "Sedang Tayang" },
+      { href: "/browse?genre=Romance", label: "Romance" },
+      { href: "/browse?genre=Action", label: "Action" },
     ],
   },
 ];
@@ -34,8 +36,8 @@ const columns = [
 export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="container-page grid gap-10 py-8 md:grid-cols-[2.1fr_0.8fr_0.8fr_1.1fr_1fr] md:gap-8">
-        <div>
+      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:grid-cols-3 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">
+        <div className="col-span-2 sm:col-span-3 lg:col-span-1">
           <Link
             href="/"
             className="font-display text-2xl font-bold tracking-[0.04em] text-brand"
@@ -49,8 +51,8 @@ export function SiteFooter() {
         </div>
 
         {columns.map((column) => (
-          <div key={column.title} className="hidden md:block">
-            <h3 className="text-xs font-semibold text-foreground">
+          <div key={column.title}>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
               {column.title}
             </h3>
             <ul className="mt-3.5 space-y-2">
@@ -67,22 +69,11 @@ export function SiteFooter() {
             </ul>
           </div>
         ))}
-
-        <div className="hidden md:block">
-          <h3 className="text-xs font-semibold text-foreground">
-            Catatan
-          </h3>
-          <p className="mt-3.5 max-w-[232px] text-[11px] leading-relaxed text-muted">
-            ANIMO tidak meng-host video. Semua stream dialirkan dari sumber
-            pihak ketiga.
-          </p>
-        </div>
       </div>
 
       <div className="border-t border-border">
-        <div className="container-page flex flex-col gap-2 py-4 pb-32 text-[11px] text-subtle sm:flex-row sm:items-center sm:justify-between md:pb-4">
+        <div className="container-page py-4 pb-32 text-[11px] text-subtle md:pb-4">
           <p>© {new Date().getFullYear()} {siteConfig.name}</p>
-          <p>Dibuat untuk penggunaan pribadi.</p>
         </div>
       </div>
     </footer>
