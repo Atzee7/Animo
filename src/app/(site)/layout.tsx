@@ -8,7 +8,7 @@ export default function SiteLayout({
   return (
     <div className="flex min-h-dvh flex-col">
       <SiteHeader />
-      <main className="flex-1 pb-32 md:pb-0">{children}</main>
+      <main className="flex flex-1 flex-col pb-32 md:pb-0">{children}</main>
       <SiteFooter />
       <MobileNav />
     </div>
