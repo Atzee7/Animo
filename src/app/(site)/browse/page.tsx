@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Compass, SlidersHorizontal } from "lucide-react";
+import { ChevronLeft, ChevronRight, Compass } from "lucide-react";
 import { PosterCard } from "@/components/anime/poster-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageIntro } from "@/components/ui/page-intro";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils/cn";
 import { getBrowseAnime } from "@/lib/anilist/client";
 import type { AnimeSummary } from "@/types/anime";
 import type { Paginated } from "@/types/api";
@@ -50,10 +51,14 @@ const BASE_SORTS = [
 ] as const;
 
 const PER_PAGE = 24;
-const FIELD_CLASS =
-  "h-10 w-full rounded-card border border-border bg-background px-3 text-sm text-foreground outline-none transition-colors focus:border-brand/60";
-const LABEL_CLASS =
-  "mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted";
+
+const chipClass = (active: boolean) =>
+  cn(
+    "inline-flex h-9 shrink-0 items-center rounded-pill border px-3.5 text-xs font-semibold transition-colors",
+    active
+      ? "border-brand/40 bg-brand text-brand-ink"
+      : "border-border bg-surface text-muted hover:border-border-strong hover:text-foreground",
+  );
 
 function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
@@ -116,6 +121,21 @@ export default async function BrowsePage({
     return `/browse?${query.toString()}`;
   };
 
+  const buildFilterHref = (
+    overrides: { genre?: string; status?: string; sort?: string } = {},
+  ) => {
+    const nextGenre = overrides.genre ?? genre;
+    const nextStatus = overrides.status ?? status;
+    const nextSort = overrides.sort ?? sort;
+
+    const query = new URLSearchParams();
+    if (nextGenre) query.set("genre", nextGenre);
+    if (nextStatus) query.set("status", nextStatus);
+    query.set("sort", nextSort);
+
+    return `/browse?${query.toString()}`;
+  };
+
   return (
     <div className="container-page py-10">
       <PageIntro
@@ -124,55 +144,50 @@ export default async function BrowsePage({
         description="Temukan anime berdasarkan genre dan urutan."
       />
 
-      <form
-        method="get"
-        className="rounded-card border border-border bg-surface p-4"
-      >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          {status ? (
-            <input type="hidden" name="status" value={status} />
-          ) : null}
-
-          <label className="sm:flex-1">
-            <span className={LABEL_CLASS}>Urutkan</span>
-            <select name="sort" defaultValue={sort} className={FIELD_CLASS}>
-              {BASE_SORTS.map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="sm:flex-1">
-            <span className={LABEL_CLASS}>Genre</span>
-            <select name="genre" defaultValue={genre} className={FIELD_CLASS}>
-              <option value="">Semua genre</option>
-              {GENRES.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className="flex items-end gap-2">
-            <button
-              type="submit"
-              className={buttonVariants({ className: "flex-1 sm:flex-none" })}
-            >
-              <SlidersHorizontal className="size-4" aria-hidden />
-              Terapkan
-            </button>
-            <Link
-              href="/browse"
-              className={buttonVariants({ variant: "secondary" })}
-            >
-              Reset
-            </Link>
+      <div className="mt-6 space-y-3">
+        <div className="flex items-start gap-3">
+          <span className="w-14 shrink-0 pt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-subtle">
+            Urutkan
+          </span>
+          <div className="no-scrollbar -mx-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 max-lg:[mask-image:linear-gradient(to_right,#000_calc(100%-2rem),transparent)] lg:flex-wrap lg:overflow-visible">
+            {BASE_SORTS.map((item) => (
+              <Link
+                key={item.value}
+                href={buildFilterHref({ sort: item.value })}
+                aria-current={item.value === sort ? "page" : undefined}
+                className={chipClass(item.value === sort)}
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
         </div>
-      </form>
+
+        <div className="flex items-start gap-3">
+          <span className="w-14 shrink-0 pt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-subtle">
+            Genre
+          </span>
+          <div className="no-scrollbar -mx-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 max-lg:[mask-image:linear-gradient(to_right,#000_calc(100%-2rem),transparent)] lg:flex-wrap lg:overflow-visible">
+            <Link
+              href={buildFilterHref({ genre: "" })}
+              aria-current={!genre ? "page" : undefined}
+              className={chipClass(!genre)}
+            >
+              Semua
+            </Link>
+            {GENRES.map((item) => (
+              <Link
+                key={item}
+                href={buildFilterHref({ genre: item })}
+                aria-current={item === genre ? "page" : undefined}
+                className={chipClass(item === genre)}
+              >
+                {item}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {!result ? (
         <EmptyState
@@ -215,6 +230,19 @@ export default async function BrowsePage({
                   {status === "RELEASING" ? "Ongoing" : status}
                 </span>
               ) : null}
+              {genre ? (
+                <span className="rounded bg-surface-raised px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-soft">
+                  {genre}
+                </span>
+              ) : null}
+              {genre || status ? (
+                <Link
+                  href={buildFilterHref({ genre: "", status: "" })}
+                  className="text-xs font-semibold text-brand transition-colors hover:text-brand/80"
+                >
+                  Reset
+                </Link>
+              ) : null}
             </p>
             <p className="text-xs text-muted">
               Halaman {result.page} dari {lastPage}
@@ -235,18 +263,24 @@ export default async function BrowsePage({
             {result.page > 1 ? (
               <Link
                 href={buildPageHref(result.page - 1)}
-                className={buttonVariants({ variant: "secondary" })}
+                aria-label="Halaman sebelumnya"
+                className={buttonVariants({
+                  variant: "secondary",
+                  className: "h-11",
+                })}
               >
-                Sebelumnya
+                <ChevronLeft className="size-4" aria-hidden />
+                <span className="hidden sm:inline">Sebelumnya</span>
               </Link>
             ) : (
               <span
                 className={buttonVariants({
                   variant: "secondary",
-                  className: "pointer-events-none opacity-40",
+                  className: "pointer-events-none h-11 opacity-40",
                 })}
               >
-                Sebelumnya
+                <ChevronLeft className="size-4" aria-hidden />
+                <span className="hidden sm:inline">Sebelumnya</span>
               </span>
             )}
 
@@ -257,17 +291,20 @@ export default async function BrowsePage({
             {result.hasNextPage ? (
               <Link
                 href={buildPageHref(result.page + 1)}
-                className={buttonVariants()}
+                aria-label="Halaman berikutnya"
+                className={buttonVariants({ className: "h-11" })}
               >
-                Berikutnya
+                <span className="hidden sm:inline">Berikutnya</span>
+                <ChevronRight className="size-4" aria-hidden />
               </Link>
             ) : (
               <span
                 className={buttonVariants({
-                  className: "pointer-events-none opacity-40",
+                  className: "pointer-events-none h-11 opacity-40",
                 })}
               >
-                Berikutnya
+                <span className="hidden sm:inline">Berikutnya</span>
+                <ChevronRight className="size-4" aria-hidden />
               </span>
             )}
           </div>
