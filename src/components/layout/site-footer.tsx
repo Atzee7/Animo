@@ -80,7 +80,7 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-border">
-        <div className="container-page flex flex-col gap-2 py-4 pb-24 text-[11px] text-subtle sm:flex-row sm:items-center sm:justify-between md:pb-4">
+        <div className="container-page flex flex-col gap-2 py-4 pb-32 text-[11px] text-subtle sm:flex-row sm:items-center sm:justify-between md:pb-4">
           <p>© {new Date().getFullYear()} {siteConfig.name}</p>
           <p>Dibuat untuk penggunaan pribadi.</p>
         </div>

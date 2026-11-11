@@ -7,7 +7,11 @@ import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils/cn";
 import { SearchBox } from "./search-box";
 
-export function SiteHeader() {
+export function SiteHeader({
+  showMobileSearch = false,
+}: {
+  showMobileSearch?: boolean;
+}) {
   const pathname = usePathname();
 
   const isActive = (href: string) =>
@@ -56,7 +60,10 @@ export function SiteHeader() {
           <Link
             href="/search"
             aria-label="Cari anime"
-            className="flex size-10 items-center justify-center text-muted transition-colors hover:text-foreground lg:hidden"
+            className={cn(
+              "size-10 items-center justify-center text-muted transition-colors hover:text-foreground lg:hidden",
+              showMobileSearch ? "flex" : "hidden md:flex",
+            )}
           >
             <Search className="size-5" aria-hidden />
           </Link>
