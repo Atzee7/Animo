@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { PosterCard } from "@/components/anime/poster-card";
+import { SearchField } from "@/components/search/search-field";
 import { EmptyState } from "@/components/ui/empty-state";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
@@ -16,61 +17,6 @@ const PER_PAGE = 24;
 
 function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
-}
-
-function SearchForm({
-  defaultValue = "",
-  centered = false,
-}: {
-  defaultValue?: string;
-  centered?: boolean;
-}) {
-  return (
-    <form
-      method="get"
-      action="/search"
-      className={
-        centered
-          ? "relative mx-auto mt-8 w-full"
-          : "relative mt-5"
-      }
-    >
-      <Search
-        className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-subtle"
-        aria-hidden
-      />
-      <input
-        name="q"
-        defaultValue={defaultValue}
-        required
-        minLength={2}
-        placeholder="Cari judul anime…"
-        aria-label="Cari anime"
-        className="h-12 w-full rounded-pill border border-border bg-surface pl-11 pr-24 text-sm text-foreground outline-none transition-colors placeholder:text-subtle focus:border-brand/60 sm:pr-28"
-      />
-      <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
-        {defaultValue ? (
-          <Link
-            href="/search"
-            aria-label="Hapus pencarian"
-            className="flex size-9 items-center justify-center rounded-full text-subtle transition-colors hover:text-foreground"
-          >
-            <X className="size-4" aria-hidden />
-          </Link>
-        ) : null}
-        <button
-          type="submit"
-          aria-label="Cari"
-          className={buttonVariants({
-            className: "h-9 px-3 sm:px-4",
-          })}
-        >
-          <Search className="size-4 sm:hidden" aria-hidden />
-          <span className="hidden sm:inline">Cari</span>
-        </button>
-      </div>
-    </form>
-  );
 }
 
 export default async function SearchPage({
@@ -126,7 +72,7 @@ export default async function SearchPage({
             <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted">
               Temukan judul, genre, atau karakter favoritmu.
             </p>
-            <SearchForm centered />
+            <SearchField centered />
           </div>
         </div>
       ) : (
@@ -134,7 +80,9 @@ export default async function SearchPage({
           <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Hasil untuk “{q}”
           </h1>
-          <SearchForm defaultValue={q} />
+          <div className="max-w-xl">
+            <SearchField key={q} defaultValue={q} />
+          </div>
 
           {!result ? (
             <EmptyState
